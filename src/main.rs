@@ -279,23 +279,15 @@ fn main() -> ExitCode {
 
                     if separate {
                         let directory = match output_folder.as_ref() {
-                            Some(out_dir) => {
-                                let directory = PathBuf::from(out_dir);
-                                _ = fs::create_dir(&directory);
-                                directory
-                            }
-                            None => {
-                                let directory: std::path::PathBuf = Path::new(&file).with_file_name({
-                                    let mut name = OsString::from(Path::new(&file).file_stem().unwrap());
-                                    name.push("-tiled");
-                                    name
-                                });
-        
-                                _ = fs::remove_dir_all(&directory);
-                                fs::create_dir(&directory)?;
-                                directory
-                            }
+                            Some(out_dir) => PathBuf::from(out_dir),
+                            None => Path::new(&file).with_file_name({
+                                let mut name = OsString::from(Path::new(&file).file_stem().unwrap());
+                                name.push("-tiled");
+                                name
+                            })
                         };
+
+                        fs::create_dir_all(&directory)?;
 
                         for i in 0..12 * 4 {
                             if i == 47 { break };
